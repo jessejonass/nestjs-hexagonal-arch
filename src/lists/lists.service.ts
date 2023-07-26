@@ -1,19 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
+import { List } from './entities/list.entity';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class ListsService {
-  create(createListDto: CreateListDto) {
-    return 'This action adds a new list';
+  constructor(
+    @InjectModel(List)
+    private listModel: typeof List,
+    private httpService: HttpService,
+  ) {}
+
+  async create(createListDto: CreateListDto) {
+    const list = await this.listModel.create(createListDto);
+
+    try {
+      await lastValueFrom(
+        this.httpService.post('lists', {
+          id: list.id,
+          name: list.name,
+          createdAt: list.createdAt,
+          updatedAt: list.updatedAt,
+        }),
+      );
+    } catch {
+      throw new BadRequestException('Error to create list item');
+    }
+
+    return list;
   }
 
-  findAll() {
-    return `This action returns all lists`;
+  async findAll() {
+    return await this.listModel.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} list`;
+  async findOne(id: number) {
+    const item = await this.listModel.findByPk(id);
+
+    if (!item) {
+      throw new NotFoundException('Item not found');
+    }
+
+    return item;
   }
 
   update(id: number, updateListDto: UpdateListDto) {
