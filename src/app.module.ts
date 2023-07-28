@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AppService } from './app.service';
 import { ListsModule } from './lists/lists.module';
-import { List } from './lists/entities/list.entity';
+import { ListModel } from './lists/entities/list.model';
 
 @Module({
   imports: [
@@ -11,7 +11,7 @@ import { List } from './lists/entities/list.entity';
       autoLoadModels: true, // feature for dev
       dialect: 'sqlite',
       host: ':memory',
-      models: [List],
+      models: [ListModel],
     }),
   ],
   controllers: [],

@@ -1,10 +1,8 @@
 {
   "lists": [
     {
-      "id": 4,
-      "name": "Item",
-      "createdAt": "2023-07-26T20:10:22.830Z",
-      "updatedAt": "2023-07-26T20:10:22.830Z"
+      "name": "Item New",
+      "id": 1
     }
   ]
 }
