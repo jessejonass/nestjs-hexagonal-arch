@@ -1,13 +1,15 @@
 import { HttpModule } from '@nestjs/axios';
+import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ListsService } from './lists.service';
 import { ListsController } from './lists.controller';
 import { ListModel } from './entities/list.model';
 import { ListGatewayHttp, ListGatewaySequelizeAdapter } from './gateways';
 // import { CreateListInCrmListener } from './listeners';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { BullModule } from '@nestjs/bull';
+import { CreateListInCrmJob } from './jobs';
+import { PublishListCreatedListener } from './listeners';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { BullModule } from '@nestjs/bull';
     ListGatewaySequelizeAdapter,
     ListGatewayHttp,
     // CreateListInCrmListener,
+    PublishListCreatedListener,
+    CreateListInCrmJob,
     {
       provide: 'ListPersistenceGatewayInterface',
       useExisting: ListGatewaySequelizeAdapter,
